@@ -18,6 +18,7 @@ import {
 
 //* https://firebase.google.com/docs/auth/web/start
 //* https://console.firebase.google.com/ => project settings
+//! firebase console settings bölümünden firebaseconfig ayarlarını al
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_apiKey,
   authDomain: process.env.REACT_APP_authDomain,
@@ -42,11 +43,13 @@ const auth = getAuth(app);
 
 export const createUser = async (email, password, displayName, navigate) => {
   try {
+    //? yeni bir kullanıcı oluşturmak için kullanılan firebase metodu
     let userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
+    //? kullanıcı profilini güncellemek için kullanılan firebase metodu
     await updateProfile(auth.currentUser, {
       displayName: displayName,
     });
@@ -61,8 +64,10 @@ export const createUser = async (email, password, displayName, navigate) => {
 
 //* https://console.firebase.google.com/
 //* => Authentication => sign-in-method => enable Email/password
+//! Email/password ile girişi enable yap
 export const signIn = async (email, password, navigate) => {
   try {
+    //? mevcut kullanıcının giriş yapması için kullanılan firebase metodu
     let userCredential = await signInWithEmailAndPassword(
       auth,
       email,
@@ -83,6 +88,7 @@ export const logOut = () => {
 };
 
 export const userObserver = (setCurrentUser) => {
+  //? Kullanıcının signin olup olmadığını takip eden ve kullanıcı değiştiğinde yeni kullanıcıyı response olarak dönen firebase metodu
   onAuthStateChanged(auth, (currentUser) => {
     if (currentUser) {
       setCurrentUser(currentUser);
@@ -95,8 +101,11 @@ export const userObserver = (setCurrentUser) => {
 
 //* https://console.firebase.google.com/
 //* => Authentication => sign-in-method => enable Google
+//! Google ile girişi enable yap
 export const signUpProvider = (navigate) => {
+  //? Google ile giriş yapılması için kullanılan firebase metodu
   const provider = new GoogleAuthProvider();
+  //? Açılır pencere ile giriş yapılması için kullanılan firebase metodu
   signInWithPopup(auth, provider)
     .then((result) => {
       console.log(result);
@@ -109,6 +118,7 @@ export const signUpProvider = (navigate) => {
 };
 
 export const forgotPassword = (email) => {
+  //? Email yoluyla şifre sıfırlama için kullanılan firebase metodu
   sendPasswordResetEmail(auth, email)
     .then(() => {
       // Password reset email sent!
