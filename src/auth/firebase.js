@@ -4,11 +4,17 @@ import {
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   updateProfile,
 } from "firebase/auth";
+import {
+  toastErrorNotify,
+  toastSuccessNotify,
+  toastWarnNotify,
+} from "../helpers/ToastNotify";
 
 //* https://firebase.google.com/docs/auth/web/start
 //* https://console.firebase.google.com/ => project settings
@@ -45,9 +51,11 @@ export const createUser = async (email, password, displayName, navigate) => {
       displayName: displayName,
     });
     navigate("/");
+    toastSuccessNotify("Registered successfully!");
     console.log(userCredential);
   } catch (err) {
-    alert(err.message);
+    toastErrorNotify(err.message);
+    // alert(err.message);
   }
 };
 
@@ -61,22 +69,23 @@ export const signIn = async (email, password, navigate) => {
       password
     );
     navigate("/");
+    toastSuccessNotify("Logged in successfully!");
     console.log(userCredential);
   } catch (err) {
-    alert(err.message);
+    toastErrorNotify(err.message);
+    // alert(err.message);
   }
 };
 
 export const logOut = () => {
   signOut(auth);
-  alert("logged out successfully");
+  toastSuccessNotify("Logged out successfully!");
 };
 
 export const userObserver = (setCurrentUser) => {
   onAuthStateChanged(auth, (currentUser) => {
     if (currentUser) {
       setCurrentUser(currentUser);
-      // ...
     } else {
       // User is signed out
       setCurrentUser(false);
@@ -96,6 +105,19 @@ export const signUpProvider = (navigate) => {
     .catch((error) => {
       // Handle Errors here.
       console.log(error);
-      // ...
+    });
+};
+
+export const forgotPassword = (email) => {
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      // Password reset email sent!
+      toastWarnNotify("Please check your mail box!");
+      // alert("Please check your mail box!");
+    })
+    .catch((err) => {
+      toastErrorNotify(err.message);
+      // alert(err.message);
+      // ..
     });
 };
